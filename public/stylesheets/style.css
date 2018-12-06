@@ -8,3 +8,23 @@ a {
   color: #00B7FF;
 }
 */
+
+.review {
+  padding-bottom: 5px;
+}
+
+.panel-body.review-container {
+  padding-top: 0;
+}
+
+.review-header {
+  margin-bottom: 10px;
+}
+
+.reviewAuthor {
+  margin: 0 5px
+}
+
+.reviewTimestap {
+  color: #cccccc;
+}

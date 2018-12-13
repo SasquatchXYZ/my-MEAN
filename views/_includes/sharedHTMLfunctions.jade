@@ -1,0 +1,5 @@
+mixin outputRating(rating)
+  - for (let k = 1; k <= rating; k++)
+    span.glyphicon.glyphicon-star
+  - for (let k = rating; k < 5; k++)
+    span.glyphicon.glyphicon-star-empty

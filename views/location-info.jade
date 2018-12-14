@@ -20,7 +20,7 @@ block content
                 p
                   | #{time.days} :
                   if time.closed
-                    | closed
+                    | Closed
                   else
                     | #{time.opening} - #{time.closing}
           .panel.panel-primary
@@ -28,7 +28,7 @@ block content
               h2.panel-title Facilities
             .panel-body
               each facility in location.facilities
-                span.lable.label-warning
+                span.label.label-warning
                   span.glyphicon.glyphicon-ok
                   | &nbsp;#{facility}
                 | &nbsp;

@@ -33,29 +33,29 @@ mongoose.connection.on('disconnected', function () {
 });
 
 const gracefulShutdown = function (msg, cb) {
-  mongoose.connection.close(function() {
+  mongoose.connection.close(function () {
     console.log(`Mongoose Disconnected through: ${msg}`);
     cb();
   })
 };
 
 // For Nodemon Restart
-process.once('SIGUSR2', function() {
-  gracefulShutdown('Nodemon Restart', function() {
+process.once('SIGUSR2', function () {
+  gracefulShutdown('Nodemon Restart', function () {
     process.kill(process.pid, 'SIGUSR2')
   })
 });
 
 // For App Termination
-process.on('SIGINT', function() {
-  gracefulShutdown('App Termination', function() {
+process.on('SIGINT', function () {
+  gracefulShutdown('App Termination', function () {
     process.exit(0)
   })
 });
 
 // For Heroku App Termination
-process.on('SIGTERM', function() {
-  gracefulShutdown('Heroku App Shutdown', function() {
+process.on('SIGTERM', function () {
+  gracefulShutdown('Heroku App Shutdown', function () {
     process.exit(0)
   })
 });

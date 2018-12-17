@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('./app_server/models/db');
+require('./app_api/models/db');
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');

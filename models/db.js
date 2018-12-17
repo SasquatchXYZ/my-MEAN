@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
+mongoose.set('useCreateIndex', true);
 
-const dbURI = 'mongodb://localhost/Loc8r';
+let dbURI = 'mongodb://localhost/Loc8r';
+if (process.env.NODE_ENV === 'production') {
+  dbURI = process.env.MONGODB_URI
+}
 mongoose.connect(dbURI, {useNewUrlParser: true});
 
 const readLine = require('readline');

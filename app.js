@@ -1,3 +1,4 @@
+require('dotenv').config();
 require('./models/db');
 const createError = require('http-errors');
 const express = require('express');

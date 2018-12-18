@@ -103,8 +103,8 @@ module.exports.reviewsUpdateOne = function (req, res) {
           } else {
             thisReview.author = req.body.author;
             thisReview.rating = req.body.rating;
-            thisReview.ReviewText = req.body.reviewText;
-            location.save(function(err, location) {
+            thisReview.reviewText = req.body.reviewText;
+            location.save(function (err, location) {
               if (err) {
                 sendJsonResponse(res, 404, err)
               } else {
@@ -124,7 +124,49 @@ module.exports.reviewsUpdateOne = function (req, res) {
 
 // DELETE One Review
 module.exports.reviewsDeleteOne = function (req, res) {
-  sendJsonResponse(res, 200, {'status': 'success'})
+  if (!req.params.locationid || !req.params.reviewid) {
+    sendJsonResponse(res, 404, {
+      'message': 'Not Found: LocationID and ReviewID are both Required'
+    });
+    return
+  }
+  Loc
+    .findById(req.params.locationid)
+    .select('reviews')
+    .exec(
+      function (err, location) {
+        if (!location) {
+          sendJsonResponse(res, 404, {
+            'message': 'LocationID Not Found'
+          });
+          return
+        } else if (err) {
+          sendJsonResponse(res, 404, err);
+          return
+        }
+        if (location.reviews && location.reviews.length > 0) {
+          if (!location.reviews.id(req.params.reviewid)) {
+            sendJsonResponse(res, 404, {
+              'message': 'ReviewID Not Found.'
+            })
+          } else {
+            location.review.id(req.params.reviewid).remove();
+            location.save(function (err) {
+              if (err) {
+                sendJsonResponse(res, 404, err)
+              } else {
+                updateAverageRating(location._id);
+                sendJsonResponse(res, 204, null)
+              }
+            })
+          }
+        } else {
+          sendJsonResponse(res, 404, {
+            'message': 'No Review to Delete.'
+          })
+        }
+      }
+    )
 };
 
 // Function for Adding and Saving a Subdocument ------------------------------------------------------------------------

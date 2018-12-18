@@ -168,7 +168,23 @@ module.exports.locationsUpdateOne = function (req, res) {
 
 // DELETE One Location
 module.exports.locationsDeleteOne = function (req, res) {
-  sendJsonResponse(res, 200, {'status': 'success'})
+  const locationid = req.params.locationid;
+  if (locationid) {
+    Loc
+      .findByIdAndRemove(locationid)
+      .exec(
+        function (err, location) {
+          if (err) {
+            sendJsonResponse(res, 303, err);
+            return
+          }
+          sendJsonResponse(res, 204, null)
+        })
+  } else {
+    sendJsonResponse(res, 404, {
+      'message': 'No LocationID'
+    })
+  }
 };
 
 // Function for the Creationg of the Locations List --------------------------------------------------------------------

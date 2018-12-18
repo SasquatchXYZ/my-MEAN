@@ -10,39 +10,41 @@ module.exports.reviewsReadOne = function (req, res) {
     Loc
       .findById(req.params.locationid)
       .select('name reviews')
-      .exec(function (err, location) {
-        let response, review;
-        if (!location) {
-          sendJsonResponse(res, 404, {
-            'message': 'LocationID Not Found.'
-          });
-          return
-        } else if (err) {
-          sendJsonResponse(res, 404, err);
-          return
-        }
-        if (location.reviews && location.reviews.length > 0) {
-          review = location.reviews.id(req.params.reviewid);
-          if (!review) {
+      .exec(
+        function (err, location) {
+          let response, review;
+          if (!location) {
             sendJsonResponse(res, 404, {
-              'message': 'ReviewID Not Found.'
-            })
-          } else {
-            response = {
-              location: {
-                name: location.name,
-                id: req.params.locationid
-              },
-              review: review
-            };
-            sendJsonResponse(res, 200, {'status': 'success'})
+              'message': 'LocationID Not Found.'
+            });
+            return
+          } else if (err) {
+            sendJsonResponse(res, 404, err);
+            return
           }
-        } else {
-          sendJsonResponse(res, 404, {
-            'message': 'No Reviews Found'
-          })
+          if (location.reviews && location.reviews.length > 0) {
+            review = location.reviews.id(req.params.reviewid);
+            if (!review) {
+              sendJsonResponse(res, 404, {
+                'message': 'ReviewID Not Found.'
+              })
+            } else {
+              response = {
+                location: {
+                  name: location.name,
+                  id: req.params.locationid
+                },
+                review: review
+              };
+              sendJsonResponse(res, 200, response)
+            }
+          } else {
+            sendJsonResponse(res, 404, {
+              'message': 'No Reviews Found'
+            })
+          }
         }
-      })
+      )
   } else {
     sendJsonResponse(res, 404, {
       'message': 'Not Found: LocationID and ReviewID are both required'

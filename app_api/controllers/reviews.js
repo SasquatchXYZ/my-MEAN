@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Loc = mongoose.model('Location');
 
 // API Reviews Routes --------------------------------------------------------------------------------------------------
+// POST - Create a Review
 module.exports.reviewsCreate = function (req, res) {
   let locationid = req.params.locationid;
   if (locationid) {
@@ -22,6 +23,7 @@ module.exports.reviewsCreate = function (req, res) {
   }
 };
 
+// GET One Review
 module.exports.reviewsReadOne = function (req, res) {
   if (req.params && req.params.locationid && req.params.reviewid) {
     Loc
@@ -69,10 +71,58 @@ module.exports.reviewsReadOne = function (req, res) {
   }
 };
 
+// POST - Update One Review
 module.exports.reviewsUpdateOne = function (req, res) {
-  sendJsonResponse(res, 200, {'status': 'success'})
+  if (!req.params.locationid || !req.params.reviewid) {
+    sendJsonResponse(res, 404, {
+      'message': 'Not Found: LocationID and ReviewID Are Both Required.'
+    });
+    return
+  }
+  Loc
+    .findById(req.params.locationid)
+    .select('reviews')
+    .exec(
+      function (err, location) {
+        let thisReview;
+        if (!location) {
+          sendJsonResponse(res, 404, {
+            'message': 'LocationID Not Found.'
+          });
+          return
+        } else if (err) {
+          sendJsonResponse(res, 404, err);
+          return
+        }
+        if (location.reviews && location.reviews.length > 0) {
+          thisReview = location.reviews.id(req.params.reviewid);
+          if (!thisReview) {
+            sendJsonResponse(res, 404, {
+              'message': 'ReviewID Not Found.'
+            })
+          } else {
+            thisReview.author = req.body.author;
+            thisReview.rating = req.body.rating;
+            thisReview.ReviewText = req.body.reviewText;
+            location.save(function(err, location) {
+              if (err) {
+                sendJsonResponse(res, 404, err)
+              } else {
+                updateAverageRating(location._id);
+                sendJsonResponse(res, 300, thisReview)
+              }
+            })
+          }
+        } else {
+          sendJsonResponse(res, 404, {
+            'message': 'No Review to Update.'
+          })
+        }
+      }
+    )
 };
 
+// DELETE One Review
 module.exports.reviewsDeleteOne = function (req, res) {
   sendJsonResponse(res, 200, {'status': 'success'})
 };

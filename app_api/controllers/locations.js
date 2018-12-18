@@ -20,6 +20,7 @@ const theEarth = (function () {
 })();
 
 // API Locations Routes ------------------------------------------------------------------------------------------------
+// POST - Create a Location
 module.exports.locationsCreate = function (req, res) {
   Loc.create({
     name: req.body.name,
@@ -46,6 +47,7 @@ module.exports.locationsCreate = function (req, res) {
   })
 };
 
+// GET Locations
 module.exports.locationsListByDistance = function (req, res) {
   let lng = parseFloat(req.query.lng);
   let lat = parseFloat(req.query.lat);
@@ -92,6 +94,7 @@ module.exports.locationsListByDistance = function (req, res) {
   })
 };
 
+// GET One Location
 module.exports.locationsReadOne = function (req, res) {
   if (req.params && req.params.locationid) {
     Loc
@@ -115,10 +118,55 @@ module.exports.locationsReadOne = function (req, res) {
   }
 };
 
+// POST - Update One Location
 module.exports.locationsUpdateOne = function (req, res) {
-  sendJsonResponse(res, 200, {'status': 'success'})
+  if (!req.params.locationid) {
+    sendJsonResponse(res, 404, {
+      'message': 'Not Found: LocationID is Required.'
+    });
+    return
+  }
+  Loc
+    .findById(req.params.locationid)
+    .select('-reviews -rating')
+    .exec(
+      function (err, location) {
+        if (!location) {
+          sendJsonResponse(res, 404, {
+            'message': 'LocationID Not Found.'
+          });
+          return
+        } else if (err) {
+          sendJsonResponse(res, 404, err);
+          return
+        }
+        location.name = req.body.name;
+        location.address = req.body.address;
+        location.facilities = req.body.facilities.split(',');
+        location.coords = [parseFloat(req.body.lng), parseFloat(req.body.lat)];
+        location.openingTimes = [{
+          days: req.body.days1,
+          opening: req.body.opening1,
+          closing: req.body.closing1,
+          closed: req.body.closed1
+        }, {
+          days: req.body.days2,
+          opening: req.body.opening2,
+          closing: req.body.closing2,
+          closed: req.body.closed2
+        }];
+        location.save(function (err, location) {
+          if (err) {
+            sendJsonResponse(res, 404, err)
+          } else {
+            sendJsonResponse(res, 200, location);
+          }
+        })
+      }
+    )
 };
 
+// DELETE One Location
 module.exports.locationsDeleteOne = function (req, res) {
   sendJsonResponse(res, 200, {'status': 'success'})
 };

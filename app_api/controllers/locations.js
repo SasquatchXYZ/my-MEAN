@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Loc = mongoose.model('Location');
 
+// Function for determining the distance in radians --------------------------------------------------------------------
 const theEarth = (function () {
   const earthRadius = 6371; // km, miles is 3959
 
@@ -18,6 +19,7 @@ const theEarth = (function () {
   }
 })();
 
+// API Locations Routes ------------------------------------------------------------------------------------------------
 module.exports.locationsCreate = function (req, res) {
   Loc.create({
     name: req.body.name,
@@ -121,12 +123,7 @@ module.exports.locationsDeleteOne = function (req, res) {
   sendJsonResponse(res, 200, {'status': 'success'})
 };
 
-
-const sendJsonResponse = function (res, status, content) {
-  res.status(status)
-    .json(content)
-};
-
+// Function for the Creationg of the Locations List --------------------------------------------------------------------
 const makeLocationsList = function (req, res, results, stats) {
   let locations = [];
   results.forEach(function (doc) {
@@ -140,4 +137,10 @@ const makeLocationsList = function (req, res, results, stats) {
     })
   });
   return locations
+};
+
+// Reusable Function for the sending of JSON Responses -----------------------------------------------------------------
+const sendJsonResponse = function (res, status, content) {
+  res.status(status)
+    .json(content)
 };

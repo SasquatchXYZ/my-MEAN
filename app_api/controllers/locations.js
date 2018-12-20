@@ -77,7 +77,7 @@ module.exports.locationsListByDistance = function (req, res) {
         near: [lng, lat],
         spherical: true,
         maxDistance: theEarth.getRadsFromDistance(20),
-        distanceField: 'dis',
+        distanceField: 'distance',
         num: 10
       }
     }

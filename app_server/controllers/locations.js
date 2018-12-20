@@ -1,37 +1,35 @@
+const request = require('request');
+let apiOptions = {
+  server: 'http://localhost:3000'
+};
+if (process.env.NODE_ENV === 'production') {
+  apiOptions.server = 'https://mymeantestapp.herokuapp.com/'
+}
 /* GET 'home' page*/
 module.exports.homelist = function (req, res) {
-  res.render("locations-list", {
-    title: "Loc8r - find a place to work with wifi",
-    pageHeader: {
-      title: "Loc8r",
-      strapline: "Find places to work with wifi near you!"
-    },
-    sidebar:
-      "Looking for wifi and a seat?  Loc8r helps you find places to work when out and about.  Perhaps with coffee, cake or a pint?  Let Loc8r help you find the place you're looking for.",
-    locations: [
-      {
-        name: "Starcups",
-        address: "125 High Street, Reading, RG6 1PS",
-        rating: 3,
-        facilities: ["Hot Drinks", "Food", "Premium Wifi"],
-        distance: "100m"
-      },
-      {
-        name: "Cafe Hero",
-        address: "125 High Street, Reading, RG6 1PS",
-        rating: 4,
-        facilities: ["Hot Drinks", "Food", "Premium Wifi"],
-        distance: "200m"
-      },
-      {
-        name: "Burger Queen",
-        address: "125 High Street, Reading, RG6 1PS",
-        rating: 2,
-        facilities: ["Hot Drinks", "Food", "Premium Wifi"],
-        distance: "250m"
+  const path = '/api/locations';
+  const requestOptions = {
+    url: apiOptions.server + path,
+    method: 'GET',
+    json: {},
+    qs: {
+      lng: -84.238690,
+      lat: 33.879700,
+      maxDistance: 20
+    }
+  };
+  request(
+    requestOptions,
+    function (err, response, body) {
+      let data = body;
+      if (response.statusCode === 200 && data.length) {
+        for (let k = 0; k < data.length; k++) {
+          data[k].distance = _formatDistance(data[k].distance)
+        }
       }
-    ]
-  });
+      renderHomepage(req, res, data)
+    }
+  )
 };
 
 /* GET 'Location info' page*/
@@ -95,4 +93,32 @@ module.exports.addReview = function (req, res) {
     title: "Review Starcups on Loc8r",
     pageHeader: {title: "Review Starcups"}
   });
+};
+
+// Functions for the Rendering of Pages --------------------------------------------------------------------------------
+// Render Homepage
+const renderHomepage = function (req, res, responseBody) {
+  res.render("locations-list", {
+    title: "Loc8r - find a place to work with wifi",
+    pageHeader: {
+      title: "Loc8r",
+      strapline: "Find places to work with wifi near you!"
+    },
+    sidebar:
+      "Looking for wifi and a seat?  Loc8r helps you find places to work when out and about.  Perhaps with coffee, cake or a pint?  Let Loc8r help you find the place you're looking for.",
+    locations: responseBody
+  });
+};
+
+// Function to Format Homepage Distance
+const _formatDistance = function (distance) {
+  let numDistance, unit;
+  if (distance > 1) {
+    numDistance = parseFloat(distance).toFixed(1);
+    unit = 'km'
+  } else {
+    numDistance = parseInt(distance * 1000, 10);
+    unit = 'm'
+  }
+  return numDistance + unit
 };

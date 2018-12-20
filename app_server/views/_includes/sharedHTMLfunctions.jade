@@ -3,3 +3,12 @@ mixin outputRating(rating)
     span.glyphicon.glyphicon-star
   - for (let k = rating; k < 5; k++)
     span.glyphicon.glyphicon-star-empty
+
+mixin formatDate(dateString)
+  -let date = new Date(dateString);
+  -let monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  -let d = date.getDate();
+  -let m = monthNames[date.getMonth()];
+  -let y = date.getFullYear();
+  -let output = d + ' ' + m + ' ' + y;
+  =output

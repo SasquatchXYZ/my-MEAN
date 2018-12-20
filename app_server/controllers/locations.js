@@ -47,25 +47,29 @@ module.exports.locationInfo = function (req, res) {
     requestOptions,
     function (err, response, body) {
       let data = body;
-      data.coords = {
-        lng: body.coords[0],
-        lat: body.coords[1]
-      };
-      for (let k = 0; k < data.reviews.length; k++) {
-        data.reviews[k].createdOn = moment(data.reviews[k].createdOn).format('D MMMM YYYY')
+      if (response.statusCode === 200) {
+        data.coords = {
+          lng: body.coords[0],
+          lat: body.coords[1]
+        };
+        for (let k = 0; k < data.reviews.length; k++) {
+          data.reviews[k].createdOn = moment(data.reviews[k].createdOn).format('D MMMM YYYY')
+        }
+        renderDetailPage(req, res, data)
+      } else {
+        _showError(req, res, response.statusCode)
       }
-      console.log(data);
-      renderDetailPage(req, res, data)
     }
   )
 };
 
-// Add Review Page
+module.exports.doAddReview = function(req, res) {
+
+};
+
+// GET 'Add Review' Page
 module.exports.addReview = function (req, res) {
-  res.render("location-review-form", {
-    title: "Review Starcups on Loc8r",
-    pageHeader: {title: "Review Starcups"}
-  });
+  renderReviewForm( req, res)
 };
 
 // Render Functions ----------------------------------------------------------------------------------------------------
@@ -107,6 +111,14 @@ const renderDetailPage = function (req, res, locDetail) {
     location: locDetail
   });
 };
+
+// Render Review Form Page
+const renderReviewForm = function(req, res) {
+  res.render("location-review-form", {
+    title: "Review Starcups on Loc8r",
+    pageHeader: {title: "Review Starcups"}
+  });
+};
 // Helper Functions ----------------------------------------------------------------------------------------------------
 // Function to Format Homepage Distance
 const _formatDistance = function (distance) {
@@ -119,4 +131,46 @@ const _formatDistance = function (distance) {
     unit = 'm'
   }
   return numDistance + unit
+};
+
+// Error Handling Function for Details Page
+const _showError = function(req, res, status) {
+  let title, content;
+  if (status === 404) {
+    title = '404: Page Not Found';
+    content = 'Oh dear.  It looks like we can\'t find this page. Sorry.';
+  } else {
+    title = status + ', something\'s gone wrong';
+    content = 'Something, somewhere, bas gone just a little bit wrong.';
+  }
+  res.status(status);
+  res.render('generic', {
+    title: title,
+    content: content
+  })
+};
+
+// Reusable Function for GETting the Location Information
+const getLocationInfo = function(req, res, callback) {
+  const path = '/api/locations' + req.params.locationid;
+  const requestOptions = {
+    url: apiOptions.server + path,
+    method: 'GET',
+    json: {}
+  };
+  request(
+    requestOptions,
+      function(err, response, body) {
+      let data = body;
+      if (response.statusCode === 200) {
+        data.coords = {
+          lng: body.coords[0],
+          lat: body.coords[1]
+        };
+        callback(req, res, data)
+      } else {
+        _showError(req, res, response.statusCode)
+      }
+      }
+  )
 };

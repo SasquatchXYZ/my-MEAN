@@ -22,6 +22,7 @@ module.exports.homelist = function (req, res) {
     requestOptions,
     function (err, response, body) {
       let data = body;
+      console.log(response.statusCode);
       if (response.statusCode === 200 && data.length) {
         for (let k = 0; k < data.length; k++) {
           data[k].distance = _formatDistance(data[k].distance)
@@ -95,7 +96,7 @@ module.exports.addReview = function (req, res) {
   });
 };
 
-// Functions for the Rendering of Pages --------------------------------------------------------------------------------
+// Render Functions ----------------------------------------------------------------------------------------------------
 // Render Homepage
 const renderHomepage = function (req, res, responseBody) {
   let message;
@@ -120,6 +121,9 @@ const renderHomepage = function (req, res, responseBody) {
   });
 };
 
+// Render Details Page
+
+// Helper Functions ----------------------------------------------------------------------------------------------------
 // Function to Format Homepage Distance
 const _formatDistance = function (distance) {
   let numDistance, unit;

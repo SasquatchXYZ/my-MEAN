@@ -63,7 +63,7 @@ module.exports.locationsListByDistance = function (req, res) {
     num: 10
   };
 
-  if (!lng || !lat) {
+  if ((!lng && lng !== 0) || (!lat && lat !== 0 )) {
     sendJsonResponse(res, 404, {
       'message': 'Longitude and Latitude Query Parameters are Required.'
     });
@@ -81,15 +81,15 @@ module.exports.locationsListByDistance = function (req, res) {
         num: 10
       }
     }
-  ]).then(function (err, results, stats) {
-    let locations;
-    console.log('Geo Results', results);
-    console.log('Geo Stats', stats);
-    if (err) {
-      sendJsonResponse(res, 404, err);
+  ]).then(function (results) {
+    // let locations;
+    // console.log('Geo Results', results);
+    // console.log('Geo Stats', stats);
+    if (!results) {
+      sendJsonResponse(res, 404, {'message': 'No Results Found.'});
     } else {
-      locations = makeLocationsList(req, res, results, stats);
-      sendJsonResponse(res, 200, locations)
+      // locations = makeLocationsList(req, res, results, stats);
+      sendJsonResponse(res, 200, results)
     }
   })
 };

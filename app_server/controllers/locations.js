@@ -37,39 +37,21 @@ module.exports.homelist = function (req, res) {
 
 // Location Info Page
 module.exports.locationInfo = function (req, res) {
-  const path = '/api/locations/' + req.params.locationid;
-  const requestOptions = {
-    url: apiOptions.server + path,
-    method: 'GET',
-    json: {},
-  };
-  request(
-    requestOptions,
-    function (err, response, body) {
-      let data = body;
-      if (response.statusCode === 200) {
-        data.coords = {
-          lng: body.coords[0],
-          lat: body.coords[1]
-        };
-        for (let k = 0; k < data.reviews.length; k++) {
-          data.reviews[k].createdOn = moment(data.reviews[k].createdOn).format('D MMMM YYYY')
-        }
-        renderDetailPage(req, res, data)
-      } else {
-        _showError(req, res, response.statusCode)
-      }
-    }
-  )
+  getLocationInfo(req, res, function (req, res, responseData) {
+    renderDetailPage(req, res, responseData)
+  })
 };
 
-module.exports.doAddReview = function(req, res) {
+// POST New Review from 'Add Review' Page
+module.exports.doAddReview = function (req, res) {
 
 };
 
 // GET 'Add Review' Page
 module.exports.addReview = function (req, res) {
-  renderReviewForm( req, res)
+  getLocationInfo(req, res, function (req, res, responseData) {
+    renderReviewForm(req, res, responseData)
+  })
 };
 
 // Render Functions ----------------------------------------------------------------------------------------------------
@@ -113,10 +95,10 @@ const renderDetailPage = function (req, res, locDetail) {
 };
 
 // Render Review Form Page
-const renderReviewForm = function(req, res) {
+const renderReviewForm = function (req, res, locDetail) {
   res.render("location-review-form", {
-    title: "Review Starcups on Loc8r",
-    pageHeader: {title: "Review Starcups"}
+    title: `Review ${locDetail.name} on Loc8r`,
+    pageHeader: {title: `Review ${locDetail.name}`}
   });
 };
 // Helper Functions ----------------------------------------------------------------------------------------------------
@@ -134,7 +116,7 @@ const _formatDistance = function (distance) {
 };
 
 // Error Handling Function for Details Page
-const _showError = function(req, res, status) {
+const _showError = function (req, res, status) {
   let title, content;
   if (status === 404) {
     title = '404: Page Not Found';
@@ -151,8 +133,8 @@ const _showError = function(req, res, status) {
 };
 
 // Reusable Function for GETting the Location Information
-const getLocationInfo = function(req, res, callback) {
-  const path = '/api/locations' + req.params.locationid;
+const getLocationInfo = function (req, res, callback) {
+  const path = '/api/locations/' + req.params.locationid;
   const requestOptions = {
     url: apiOptions.server + path,
     method: 'GET',
@@ -160,17 +142,20 @@ const getLocationInfo = function(req, res, callback) {
   };
   request(
     requestOptions,
-      function(err, response, body) {
+    function (err, response, body) {
       let data = body;
       if (response.statusCode === 200) {
         data.coords = {
           lng: body.coords[0],
           lat: body.coords[1]
         };
+        for (let k = 0; k < data.reviews.length; k++) {
+          data.reviews[k].createdOn = moment(data.reviews[k].createdOn).format('D MMMM YYYY')
+        }
         callback(req, res, data)
       } else {
         _showError(req, res, response.statusCode)
       }
-      }
+    }
   )
 };

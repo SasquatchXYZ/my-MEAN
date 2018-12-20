@@ -63,7 +63,7 @@ module.exports.locationsListByDistance = function (req, res) {
     num: 10
   };
 
-  if ((!lng && lng !== 0) || (!lat && lat !== 0 )) {
+  if ((!lng && lng !== 0) || (!lat && lat !== 0)) {
     sendJsonResponse(res, 404, {
       'message': 'Longitude and Latitude Query Parameters are Required.'
     });
@@ -76,7 +76,8 @@ module.exports.locationsListByDistance = function (req, res) {
         type: 'Point',
         near: [lng, lat],
         spherical: true,
-        maxDistance: theEarth.getRadsFromDistance(20),
+        maxDistance: theEarth.getRadsFromDistance(maxDistance),
+        distanceMultiplier: 6371,
         distanceField: 'distance',
         num: 10
       }

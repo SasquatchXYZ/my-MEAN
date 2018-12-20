@@ -98,6 +98,15 @@ module.exports.addReview = function (req, res) {
 // Functions for the Rendering of Pages --------------------------------------------------------------------------------
 // Render Homepage
 const renderHomepage = function (req, res, responseBody) {
+  let message;
+  if (!(responseBody instanceof Array)) {
+    message = 'API Lookup Error';
+    responseBody = [];
+  } else {
+    if (!responseBody.length) {
+      message = 'No places found nearby';
+    }
+  }
   res.render("locations-list", {
     title: "Loc8r - find a place to work with wifi",
     pageHeader: {
@@ -106,7 +115,8 @@ const renderHomepage = function (req, res, responseBody) {
     },
     sidebar:
       "Looking for wifi and a seat?  Loc8r helps you find places to work when out and about.  Perhaps with coffee, cake or a pint?  Let Loc8r help you find the place you're looking for.",
-    locations: responseBody
+    locations: responseBody,
+    message: message
   });
 };
 

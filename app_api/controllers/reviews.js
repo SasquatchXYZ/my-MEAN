@@ -13,7 +13,7 @@ module.exports.reviewsCreate = function (req, res) {
         if (err) {
           sendJsonResponse(res, 404, err)
         } else {
-          addReview(req, res, location)
+          doAddReview(req, res, location)
         }
       })
   } else {
@@ -170,7 +170,7 @@ module.exports.reviewsDeleteOne = function (req, res) {
 };
 
 // Function for Adding and Saving a Subdocument ------------------------------------------------------------------------
-const addReview = function (req, res, location) {
+const doAddReview = function (req, res, location) {
   if (!location) {
     sendJsonResponse(res, 404, {
       'message': 'LocationID Not Found.'
@@ -184,6 +184,7 @@ const addReview = function (req, res, location) {
     location.save(function (err, location) {
       let thisReview;
       if (err) {
+        console.log(err);
         sendJsonResponse(res, 400, err)
       } else {
         updateAverageRating(location._id);

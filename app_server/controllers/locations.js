@@ -42,16 +42,39 @@ module.exports.locationInfo = function (req, res) {
   })
 };
 
-// POST New Review from 'Add Review' Page
-module.exports.doAddReview = function (req, res) {
-
-};
-
 // GET 'Add Review' Page
 module.exports.addReview = function (req, res) {
   getLocationInfo(req, res, function (req, res, responseData) {
     renderReviewForm(req, res, responseData)
   })
+};
+
+// POST New Review from 'Add Review' Page
+module.exports.doAddReview = function (req, res) {
+  const locationid = req.params.locationid;
+  const path = `/api/locations/${locationid}/reviews`;
+  const postdata = {
+    author: req.body.name,
+    rating: parseInt(req.body.rating, 10),
+    reviewText: req.body.review
+  };
+  const requestOptions = {
+    url: apiOptions.server + path,
+    method: 'POST',
+    json: postdata
+  };
+  request(
+    requestOptions,
+    function (err, response, body) {
+      if (response.statusCode === 201) {
+        res.redirect(`/location/${locationid}`)
+      } else if (response.statusCode === 400 && body.name && body.name === 'ValidationError') {
+        res.redirect(`/location/${locationid}/reviews/new?err=val`)
+      } else {
+        _showError(req, res, response.statusCode)
+      }
+    }
+  )
 };
 
 // Render Functions ----------------------------------------------------------------------------------------------------
@@ -98,7 +121,8 @@ const renderDetailPage = function (req, res, locDetail) {
 const renderReviewForm = function (req, res, locDetail) {
   res.render("location-review-form", {
     title: `Review ${locDetail.name} on Loc8r`,
-    pageHeader: {title: `Review ${locDetail.name}`}
+    pageHeader: {title: `Review ${locDetail.name}`},
+    error: req.query.err
   });
 };
 // Helper Functions ----------------------------------------------------------------------------------------------------

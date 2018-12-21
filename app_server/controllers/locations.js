@@ -9,7 +9,8 @@ if (process.env.NODE_ENV === 'production') {
 // GET Pages -----------------------------------------------------------------------------------------------------------
 // Homepage
 module.exports.homelist = (req, res) => {
-  const path = '/api/locations';
+  renderHomepage(req, res)
+/*  const path = '/api/locations';
   const requestOptions = {
     url: apiOptions.server + path,
     method: 'GET',
@@ -31,7 +32,7 @@ module.exports.homelist = (req, res) => {
       }
       renderHomepage(req, res, data)
     }
-  )
+  )*/
 };
 
 // Location Info Page
@@ -83,7 +84,7 @@ module.exports.doAddReview = (req, res) => {
 // Render Functions ----------------------------------------------------------------------------------------------------
 // Render Homepage
 const renderHomepage = (req, res, responseBody) => {
-  let message;
+  /*let message;
   if (!(responseBody instanceof Array)) {
     message = 'API Lookup Error';
     responseBody = [];
@@ -91,7 +92,7 @@ const renderHomepage = (req, res, responseBody) => {
     if (!responseBody.length) {
       message = 'No places found nearby';
     }
-  }
+  }*/
   res.render("locations-list", {
     title: "Loc8r - find a place to work with wifi",
     pageHeader: {
@@ -99,9 +100,7 @@ const renderHomepage = (req, res, responseBody) => {
       strapline: "Find places to work with wifi near you!"
     },
     sidebar:
-      "Looking for wifi and a seat?  Loc8r helps you find places to work when out and about.  Perhaps with coffee, cake or a pint?  Let Loc8r help you find the place you're looking for.",
-    locations: responseBody,
-    message: message
+      "Looking for wifi and a seat?  Loc8r helps you find places to work when out and about.  Perhaps with coffee, cake or a pint?  Let Loc8r help you find the place you're looking for."
   });
 };
 

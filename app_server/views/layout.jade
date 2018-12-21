@@ -1,5 +1,5 @@
 doctype html
-html(lang='en-us')
+html(lang='en-us', ng-app='loc8rApp')
   head
     meta(charset='UTF-8')
     meta(name='viewport', content='width=device-width, initial-scale=1')
@@ -28,6 +28,8 @@ html(lang='en-us')
         .col-xs-12
           small &copy; Simon Holmes 2014
 
+    script(src='/angular/angular.min.js')
+    script(src='/angular/loc8rApp.js')
     script(src='/javascripts/jquery-3.3.1.js')
     script(src='/bootstrap/js/bootstrap.bundle.js')
     script(src='/javascripts/validation.js')

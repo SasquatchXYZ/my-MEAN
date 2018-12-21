@@ -1,3 +1,5 @@
+angular.module('loc8rApp', []);
+
 const locationListCtrl = $scope => {
   $scope.data = {
     locations: [{

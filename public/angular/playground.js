@@ -1,4 +1,6 @@
-const myController = $scope => $scope.myInput = "world!";
+angular.module('myApp', []);
+
+const myController = $scope => $scope.myInput = "World!";
 
 angular
   .module('myApp')

@@ -1,5 +1,5 @@
 /* GET 'About' page */
-module.exports.about = function(req, res) {
+module.exports.about = (req, res) => {
   res.render("generic-text", {
     title: "About Loc8r",
     content:

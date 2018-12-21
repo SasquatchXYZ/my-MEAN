@@ -3,13 +3,13 @@ const Loc = mongoose.model('Location');
 
 // API Reviews Routes --------------------------------------------------------------------------------------------------
 // POST - Create a Review
-module.exports.reviewsCreate = function (req, res) {
+module.exports.reviewsCreate = (req, res) => {
   let locationid = req.params.locationid;
   if (locationid) {
     Loc
       .findById(locationid)
       .select('reviews')
-      .exec(function (err, location) {
+      .exec((err, location) => {
         if (err) {
           sendJsonResponse(res, 404, err)
         } else {
@@ -24,13 +24,12 @@ module.exports.reviewsCreate = function (req, res) {
 };
 
 // GET One Review
-module.exports.reviewsReadOne = function (req, res) {
+module.exports.reviewsReadOne = (req, res) => {
   if (req.params && req.params.locationid && req.params.reviewid) {
     Loc
       .findById(req.params.locationid)
       .select('name reviews')
-      .exec(
-        function (err, location) {
+      .exec((err, location) => {
           let response, review;
           if (!location) {
             sendJsonResponse(res, 404, {
@@ -72,7 +71,7 @@ module.exports.reviewsReadOne = function (req, res) {
 };
 
 // POST - Update One Review
-module.exports.reviewsUpdateOne = function (req, res) {
+module.exports.reviewsUpdateOne = (req, res) => {
   if (!req.params.locationid || !req.params.reviewid) {
     sendJsonResponse(res, 404, {
       'message': 'Not Found: LocationID and ReviewID Are Both Required.'
@@ -82,8 +81,7 @@ module.exports.reviewsUpdateOne = function (req, res) {
   Loc
     .findById(req.params.locationid)
     .select('reviews')
-    .exec(
-      function (err, location) {
+    .exec((err, location) => {
         let thisReview;
         if (!location) {
           sendJsonResponse(res, 404, {
@@ -104,7 +102,7 @@ module.exports.reviewsUpdateOne = function (req, res) {
             thisReview.author = req.body.author;
             thisReview.rating = req.body.rating;
             thisReview.reviewText = req.body.reviewText;
-            location.save(function (err, location) {
+            location.save((err, location) => {
               if (err) {
                 sendJsonResponse(res, 404, err)
               } else {
@@ -123,7 +121,7 @@ module.exports.reviewsUpdateOne = function (req, res) {
 };
 
 // DELETE One Review
-module.exports.reviewsDeleteOne = function (req, res) {
+module.exports.reviewsDeleteOne = (req, res) => {
   if (!req.params.locationid || !req.params.reviewid) {
     sendJsonResponse(res, 404, {
       'message': 'Not Found: LocationID and ReviewID are both Required'
@@ -133,8 +131,7 @@ module.exports.reviewsDeleteOne = function (req, res) {
   Loc
     .findById(req.params.locationid)
     .select('reviews')
-    .exec(
-      function (err, location) {
+    .exec((err, location) => {
         if (!location) {
           sendJsonResponse(res, 404, {
             'message': 'LocationID Not Found'
@@ -151,7 +148,7 @@ module.exports.reviewsDeleteOne = function (req, res) {
             })
           } else {
             location.review.id(req.params.reviewid).remove();
-            location.save(function (err) {
+            location.save(err => {
               if (err) {
                 sendJsonResponse(res, 404, err)
               } else {
@@ -170,7 +167,7 @@ module.exports.reviewsDeleteOne = function (req, res) {
 };
 
 // Function for Adding and Saving a Subdocument ------------------------------------------------------------------------
-const doAddReview = function (req, res, location) {
+const doAddReview = (req, res, location) => {
   if (!location) {
     sendJsonResponse(res, 404, {
       'message': 'LocationID Not Found.'
@@ -181,7 +178,7 @@ const doAddReview = function (req, res, location) {
       rating: req.body.rating,
       reviewText: req.body.reviewText,
     });
-    location.save(function (err, location) {
+    location.save((err, location) => {
       let thisReview;
       if (err) {
         console.log(err);
@@ -197,12 +194,11 @@ const doAddReview = function (req, res, location) {
 
 // Function for Calculating and Updating the Average Rating ------------------------------------------------------------
 // Finding the Correct Document from the Location ID
-const updateAverageRating = function (locationid) {
+const updateAverageRating = locationid => {
   Loc
     .findById(locationid)
     .select('rating reviews')
-    .exec(
-      function (err, location) {
+    .exec((err, location) => {
         if (!err) {
           setAverageRating(location)
         }
@@ -211,7 +207,7 @@ const updateAverageRating = function (locationid) {
 };
 
 // Setting the Average Rating
-const setAverageRating = function (location) {
+const setAverageRating = location => {
   let k, reviewCount, ratingAverage, ratingTotal;
   if (location.review && location.reviews.length > 0) {
     reviewCount = location.reviews.length;
@@ -221,7 +217,7 @@ const setAverageRating = function (location) {
     }
     ratingAverage = parseInt(ratingTotal / reviewCount, 10);
     location.rating = ratingAverage;
-    location.save(function (err) {
+    location.save(err => {
       if (err) {
         console.log(err)
       } else {
@@ -232,7 +228,4 @@ const setAverageRating = function (location) {
 };
 
 // Reusable Function for the sending of JSON Responses -----------------------------------------------------------------
-const sendJsonResponse = function (res, status, content) {
-  res.status(status)
-    .json(content)
-};
+const sendJsonResponse = (res, status, content) => res.status(status).json(content);

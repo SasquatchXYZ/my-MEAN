@@ -2,16 +2,12 @@ const mongoose = require('mongoose');
 const Loc = mongoose.model('Location');
 
 // Function for determining the distance in radians --------------------------------------------------------------------
-const theEarth = (function () {
+const theEarth = (() => {
   const earthRadius = 6371; // km, miles is 3959
 
-  const getDistanceFromRads = function (rads) {
-    return parseFloat(rads * earthRadius);
-  };
+  const getDistanceFromRads = rads => parseFloat(rads * earthRadius);
 
-  const getRadsFromDistance = function (distance) {
-    return parseFloat(distance / earthRadius)
-  };
+  const getRadsFromDistance = distance => parseFloat(distance / earthRadius);
 
   return {
     getDistanceFromRads: getDistanceFromRads,
@@ -21,7 +17,7 @@ const theEarth = (function () {
 
 // API Locations Routes ------------------------------------------------------------------------------------------------
 // POST - Create a Location
-module.exports.locationsCreate = function (req, res) {
+module.exports.locationsCreate = (req, res) => {
   Loc.create({
     name: req.body.name,
     address: req.body.address,
@@ -38,7 +34,7 @@ module.exports.locationsCreate = function (req, res) {
       closing: req.body.closing2,
       closed: req.body.closed2,
     }]
-  }, function (err, location) {
+  }, (err, location) => {
     if (err) {
       sendJsonResponse(res, 400, err)
     } else {
@@ -48,7 +44,7 @@ module.exports.locationsCreate = function (req, res) {
 };
 
 // GET Locations
-module.exports.locationsListByDistance = function (req, res) {
+module.exports.locationsListByDistance = (req, res) => {
   let lng = parseFloat(req.query.lng);
   let lat = parseFloat(req.query.lat);
   let maxDistance = parseFloat(req.query.maxDistance);
@@ -82,7 +78,7 @@ module.exports.locationsListByDistance = function (req, res) {
         num: 10
       }
     }
-  ]).then(function (results) {
+  ]).then(results => {
     // let locations;
     // console.log('Geo Results', results);
     // console.log('Geo Stats', stats);
@@ -96,11 +92,11 @@ module.exports.locationsListByDistance = function (req, res) {
 };
 
 // GET One Location
-module.exports.locationsReadOne = function (req, res) {
+module.exports.locationsReadOne = (req, res) => {
   if (req.params && req.params.locationid) {
     Loc
       .findById(req.params.locationid)
-      .exec(function (err, location) {
+      .exec((err, location) => {
         if (!location) {
           sendJsonResponse(res, 404, {
             'message': 'LocationID Not Found.'
@@ -120,7 +116,7 @@ module.exports.locationsReadOne = function (req, res) {
 };
 
 // POST - Update One Location
-module.exports.locationsUpdateOne = function (req, res) {
+module.exports.locationsUpdateOne = (req, res) => {
   if (!req.params.locationid) {
     sendJsonResponse(res, 404, {
       'message': 'Not Found: LocationID is Required.'
@@ -130,8 +126,7 @@ module.exports.locationsUpdateOne = function (req, res) {
   Loc
     .findById(req.params.locationid)
     .select('-reviews -rating')
-    .exec(
-      function (err, location) {
+    .exec((err, location) => {
         if (!location) {
           sendJsonResponse(res, 404, {
             'message': 'LocationID Not Found.'
@@ -156,7 +151,7 @@ module.exports.locationsUpdateOne = function (req, res) {
           closing: req.body.closing2,
           closed: req.body.closed2
         }];
-        location.save(function (err, location) {
+        location.save((err, location) => {
           if (err) {
             sendJsonResponse(res, 404, err)
           } else {
@@ -168,13 +163,12 @@ module.exports.locationsUpdateOne = function (req, res) {
 };
 
 // DELETE One Location
-module.exports.locationsDeleteOne = function (req, res) {
+module.exports.locationsDeleteOne = (req, res) => {
   const locationid = req.params.locationid;
   if (locationid) {
     Loc
       .findByIdAndRemove(locationid)
-      .exec(
-        function (err, location) {
+      .exec((err, location) => {
           if (err) {
             sendJsonResponse(res, 303, err);
             return
@@ -189,9 +183,9 @@ module.exports.locationsDeleteOne = function (req, res) {
 };
 
 // Function for the Creationg of the Locations List --------------------------------------------------------------------
-const makeLocationsList = function (req, res, results, stats) {
+const makeLocationsList = (req, res, results, stats) => {
   let locations = [];
-  results.forEach(function (doc) {
+  results.forEach(doc => {
     locations.push({
       distance: theEarth.getDistanceFromRads(doc.dis),
       name: doc.obj.name,
@@ -205,7 +199,4 @@ const makeLocationsList = function (req, res, results, stats) {
 };
 
 // Reusable Function for the sending of JSON Responses -----------------------------------------------------------------
-const sendJsonResponse = function (res, status, content) {
-  res.status(status)
-    .json(content)
-};
+const sendJsonResponse = (res, status, content) => res.status(status).json(content);

@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 // GET Pages -----------------------------------------------------------------------------------------------------------
 // Homepage
-module.exports.homelist = function (req, res) {
+module.exports.homelist = (req, res) => {
   const path = '/api/locations';
   const requestOptions = {
     url: apiOptions.server + path,
@@ -21,8 +21,7 @@ module.exports.homelist = function (req, res) {
     }
   };
   request(
-    requestOptions,
-    function (err, response, body) {
+    requestOptions, (err, response, body) => {
       let data = body;
       console.log(response.statusCode);
       if (response.statusCode === 200 && data.length) {
@@ -36,21 +35,21 @@ module.exports.homelist = function (req, res) {
 };
 
 // Location Info Page
-module.exports.locationInfo = function (req, res) {
-  getLocationInfo(req, res, function (req, res, responseData) {
+module.exports.locationInfo = (req, res) => {
+  getLocationInfo(req, res, (req, res, responseData) => {
     renderDetailPage(req, res, responseData)
   })
 };
 
 // GET 'Add Review' Page
-module.exports.addReview = function (req, res) {
-  getLocationInfo(req, res, function (req, res, responseData) {
+module.exports.addReview = (req, res) => {
+  getLocationInfo(req, res, (req, res, responseData) => {
     renderReviewForm(req, res, responseData)
   })
 };
 
 // POST New Review from 'Add Review' Page
-module.exports.doAddReview = function (req, res) {
+module.exports.doAddReview = (req, res) => {
   const locationid = req.params.locationid;
   const path = `/api/locations/${locationid}/reviews`;
   const postdata = {
@@ -68,7 +67,7 @@ module.exports.doAddReview = function (req, res) {
   } else {
     request(
       requestOptions,
-      function (err, response, body) {
+      (err, response, body) => {
         if (response.statusCode === 201) {
           res.redirect(`/location/${locationid}`)
         } else if (response.statusCode === 400 && body.name && body.name === 'ValidationError') {
@@ -83,7 +82,7 @@ module.exports.doAddReview = function (req, res) {
 
 // Render Functions ----------------------------------------------------------------------------------------------------
 // Render Homepage
-const renderHomepage = function (req, res, responseBody) {
+const renderHomepage = (req, res, responseBody) => {
   let message;
   if (!(responseBody instanceof Array)) {
     message = 'API Lookup Error';
@@ -107,7 +106,7 @@ const renderHomepage = function (req, res, responseBody) {
 };
 
 // Render Details Page
-const renderDetailPage = function (req, res, locDetail) {
+const renderDetailPage = (req, res, locDetail) => {
   res.render("location-info", {
     title: locDetail.name,
     pageHeader: {title: locDetail.name},
@@ -122,7 +121,7 @@ const renderDetailPage = function (req, res, locDetail) {
 };
 
 // Render Review Form Page
-const renderReviewForm = function (req, res, locDetail) {
+const renderReviewForm = (req, res, locDetail) => {
   res.render("location-review-form", {
     title: `Review ${locDetail.name} on Loc8r`,
     pageHeader: {title: `Review ${locDetail.name}`},
@@ -131,7 +130,7 @@ const renderReviewForm = function (req, res, locDetail) {
 };
 // Helper Functions ----------------------------------------------------------------------------------------------------
 // Function to Format Homepage Distance
-const _formatDistance = function (distance) {
+const _formatDistance = distance => {
   let numDistance, unit;
   if (distance > 1) {
     numDistance = parseFloat(distance).toFixed(1);
@@ -144,7 +143,7 @@ const _formatDistance = function (distance) {
 };
 
 // Error Handling Function for Details Page
-const _showError = function (req, res, status) {
+const _showError = (req, res, status) => {
   let title, content;
   if (status === 404) {
     title = '404: Page Not Found';
@@ -161,7 +160,7 @@ const _showError = function (req, res, status) {
 };
 
 // Reusable Function for GETting the Location Information
-const getLocationInfo = function (req, res, callback) {
+const getLocationInfo = (req, res, callback) => {
   const path = '/api/locations/' + req.params.locationid;
   const requestOptions = {
     url: apiOptions.server + path,
@@ -169,8 +168,7 @@ const getLocationInfo = function (req, res, callback) {
     json: {}
   };
   request(
-    requestOptions,
-    function (err, response, body) {
+    requestOptions, (err, response, body) => {
       let data = body;
       if (response.statusCode === 200) {
         data.coords = {

@@ -13,53 +13,39 @@ if (process.platform === 'win32') {
     input: process.stdin,
     output: process.stdout
   });
-  rl.on('SIGINT', function () {
-    process.emit('SIGINT')
-  });
-  rl.on('SIGUSR2', function () {
-    process.emit('SIGUSR2')
-  });
-  rl.on('SIGTERM', function () {
-    process.emit('SIGTERM')
-  })
+  rl.on('SIGINT', () => process.emit('SIGINT'));
+  rl.on('SIGUSR2', () => process.emit('SIGUSR2'));
+  rl.on('SIGTERM', () => process.emit('SIGTERM'))
 }
 
-mongoose.connection.on('connected', function () {
-  console.log(`Mongoose connected to ${dbURI}`)
-});
+mongoose.connection.on('connected', () => console.log(`Mongoose connected to ${dbURI}`));
+mongoose.connection.on('error', err => console.log(`Mongoose connection error: ${err}`));
+mongoose.connection.on('disconnected', () => console.log(`Mongoose Disconnected`));
 
-mongoose.connection.on('error', function (err) {
-  console.log(`Mongoose connection error: ${err}`)
-});
-
-mongoose.connection.on('disconnected', function () {
-  console.log(`Mongoose Disconnected`)
-});
-
-const gracefulShutdown = function (msg, cb) {
-  mongoose.connection.close(function () {
+const gracefulShutdown = (msg, cb) => {
+  mongoose.connection.close(() => {
     console.log(`Mongoose Disconnected through: ${msg}`);
-    cb();
+    cb()
   })
 };
 
 // For Nodemon Restart
-process.once('SIGUSR2', function () {
-  gracefulShutdown('Nodemon Restart', function () {
+process.once('SIGUSR2', () => {
+  gracefulShutdown('Nodemon Restart', () => {
     process.kill(process.pid, 'SIGUSR2')
   })
 });
 
 // For App Termination
-process.on('SIGINT', function () {
-  gracefulShutdown('App Termination', function () {
+process.on('SIGINT', () => {
+  gracefulShutdown('App Termination', () => {
     process.exit(0)
   })
 });
 
 // For Heroku App Termination
-process.on('SIGTERM', function () {
-  gracefulShutdown('Heroku App Shutdown', function () {
+process.on('SIGTERM', () => {
+  gracefulShutdown('Heroku App Shutdown', () => {
     process.exit(0)
   })
 });

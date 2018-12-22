@@ -48,7 +48,10 @@ const formatDistance = () => {
 // Directive for rendering Rating
 const ratingStars = () => {
   return {
-    template: '{{ location.rating }}'
+    scope: {
+      thisRating: '=rating'
+    },
+    templateUrl: '/angular/rating-stars.html'
   }
 };
 

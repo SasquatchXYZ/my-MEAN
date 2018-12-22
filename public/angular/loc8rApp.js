@@ -44,7 +44,16 @@ const formatDistance = () => {
   }
 };
 
+// Directives ----------------------------------------------------------------------------------------------------------
+// Directive for rendering Rating
+const ratingStars = () => {
+  return {
+    template: '{{ location.rating }}'
+  }
+};
+
 angular
   .module('loc8rApp')
   .controller('locationListCtrl', locationListCtrl)
-  .filter('formatDistance', formatDistance);
+  .filter('formatDistance', formatDistance)
+  .directive('ratingStars', ratingStars);

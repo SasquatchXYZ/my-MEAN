@@ -2,24 +2,8 @@ angular.module('loc8rApp', []);
 
 // Controllers ---------------------------------------------------------------------------------------------------------
 // Locations-List Controller
-const locationListCtrl = $scope => {
-  $scope.data = {
-    locations: [{
-      name: 'Burger Queen',
-      address: '125 High Street, Reading, RG6 1PS',
-      rating: 3,
-      facilities: ['Hot drinks', 'Food', 'Premium Wifi'],
-      distance: '0.296456',
-      _id: '5370a35f2536f6785f8dfb6a'
-    }, {
-      name: 'Costy',
-      address: '125 High Street, Reading, RG6 1PS',
-      rating: 5,
-      facilities: ['Hot drinks', 'Food', 'Alcoholic Drinks'],
-      distance: '0.7865456',
-      _id: '5370a35f2536f6785f8dfb6a'
-    }]
-  }
+const locationListCtrl = ($scope, loc8rData) => {
+  $scope.data = {locations: loc8rData}
 };
 
 // Filters -------------------------------------------------------------------------------------------------------------
@@ -55,8 +39,28 @@ const ratingStars = () => {
   }
 };
 
+// Services ------------------------------------------------------------------------------------------------------------
+const loc8rData = function () {
+  return [{
+    name: 'Burger Queen',
+    address: '125 High Street, Reading, RG6 1PS',
+    rating: 3,
+    facilities: ['Hot drinks', 'Food', 'Premium Wifi'],
+    distance: '0.296456',
+    _id: '5370a35f2536f6785f8dfb6a'
+  }, {
+    name: 'Costy',
+    address: '125 High Street, Reading, RG6 1PS',
+    rating: 5,
+    facilities: ['Hot drinks', 'Food', 'Alcoholic Drinks'],
+    distance: '0.7865456',
+    _id: '5370a35f2536f6785f8dfb6a'
+  }]
+};
+
 angular
   .module('loc8rApp')
   .controller('locationListCtrl', locationListCtrl)
   .filter('formatDistance', formatDistance)
-  .directive('ratingStars', ratingStars);
+  .directive('ratingStars', ratingStars)
+  .service('loc8rData', loc8rData);

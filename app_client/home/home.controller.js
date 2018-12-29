@@ -2,7 +2,7 @@ angular
   .module('loc8rApp')
   .controller('homeCtrl', homeCtrl);
 
-function homeCtrl(loc9rData, geolocation) {
+function homeCtrl($scope, loc8rData, geolocation) {
   const vm = this;
   vm.pageHeader = {
     title: 'Loc8r',
@@ -29,16 +29,16 @@ function homeCtrl(loc9rData, geolocation) {
   };
 
   vm.showError = error => {
-    vm.$apply(() => {
+    $scope.$apply(() => {
       vm.message = error.message
     })
   };
 
   vm.noGeo = () => {
-    vm.$apply(() => {
+    $scope.$apply(() => {
       vm.message = 'Geolocation not supported by this browser.'
     })
   };
 
-  geolocation.getPosition($scope.getData, $scope.showError, $scope.noGeo)
+  geolocation.getPosition(vm.getData, vm.showError, vm.noGeo)
 }

@@ -1,8 +1,8 @@
 angular
-  .module('loc9rApp')
+  .module('loc8rApp')
   .service('geolocation', geolocation);
 
-const geolocation = function () {
+function geolocation() {
   const getPosition = function (cbSuccess, cbError, cbNoGeo) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(cbSuccess, cbError)

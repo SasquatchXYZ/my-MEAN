@@ -3,7 +3,7 @@ angular.module('loc8rApp', []);
 // Controllers ---------------------------------------------------------------------------------------------------------
 // Locations-List Controller
 const locationListCtrl = ($scope, loc8rData, geolocation) => {
-/*  $scope.message = 'Checking your location...';
+  $scope.message = 'Checking your location...';
 
   $scope.getData = position => {
     const lat = position.coords.latitude,
@@ -32,7 +32,7 @@ const locationListCtrl = ($scope, loc8rData, geolocation) => {
     })
   };
 
-  geolocation.getPosition($scope.getData, $scope.showError, $scope.noGeo)*/
+  geolocation.getPosition($scope.getData, $scope.showError, $scope.noGeo)
 };
 
 // Filters -------------------------------------------------------------------------------------------------------------
@@ -70,17 +70,17 @@ const ratingStars = () => {
 
 // Services ------------------------------------------------------------------------------------------------------------
 // Service to Fetch the Database Information
-/*const loc8rData = function ($http) {
+const loc8rData = function ($http) {
   const locationByCoords = (lat, lng) => {
     return $http.get(`/api/locations?lng=${lng}&lat=${lat}&maxDistance=20`)
   };
   return {
     locationByCoords: locationByCoords
   }
-};*/
+};
 
 // Service for Geolocation of the User.
-/*const geolocation = function () {
+const geolocation = function () {
   const getPosition = function (cbSuccess, cbError, cbNoGeo) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(cbSuccess, cbError)
@@ -91,7 +91,7 @@ const ratingStars = () => {
   return {
     getPosition : getPosition
   }
-};*/
+};
 
 angular
   .module('loc8rApp')

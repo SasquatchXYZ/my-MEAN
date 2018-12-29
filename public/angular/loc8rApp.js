@@ -3,15 +3,36 @@ angular.module('loc8rApp', []);
 // Controllers ---------------------------------------------------------------------------------------------------------
 // Locations-List Controller
 const locationListCtrl = ($scope, loc8rData, geolocation) => {
-  $scope.message = 'Searching For Nearby Places...';
-  loc8rData
-    .then(results => {
-      $scope.message = results.data.length > 0 ? '' : 'No Locations Found.';
-      $scope.data = {locations: results.data}
-    }, e => {
-      $scope.message = 'Sorry, Something\'s Gone Wrong...';
-      console.log(e)
+  $scope.message = 'Checking your location...';
+
+  $scope.getData = position => {
+    const lat = position.coords.latitude,
+      lng = position.coords.longitude;
+    $scope.message = 'Searching For Nearby Places...';
+    loc8rData.locationByCoords(lat, lng)
+      .then(results => {
+        console.log(results);
+        $scope.message = results.data.length > 0 ? '' : 'No Locations Found.';
+        $scope.data = {locations: results.data}
+      }, e => {
+        $scope.message = 'Sorry, Something\'s Gone Wrong...';
+        console.log(e)
+      })
+  };
+
+  $scope.showError = error => {
+    $scope.$apply(() => {
+      $scope.message = error.message
     })
+  };
+
+  $scope.noGeo = () => {
+    $scope.$apply(() => {
+      $scope.message = 'Geolocation not supported by this browser.'
+    })
+  };
+
+  geolocation.getPosition($scope.getData, $scope.showError, $scope.noGeo)
 };
 
 // Filters -------------------------------------------------------------------------------------------------------------
@@ -50,7 +71,13 @@ const ratingStars = () => {
 // Services ------------------------------------------------------------------------------------------------------------
 // Service to Fetch the Database Information
 const loc8rData = function ($http) {
-  return $http.get('/api/locations?lng=-84.238690&lat=33.879700&maxDistance=20');
+  const locationByCoords = (lat, lng) => {
+    return $http.get(`/api/locations?lng=${lng}&lat=${lat}&maxDistance=20`)
+  };
+  return {
+    locationByCoords: locationByCoords
+  }
+
   /*return [{
     name: 'Burger Queen',
     address: '125 High Street, Reading, RG6 1PS',
@@ -70,7 +97,7 @@ const loc8rData = function ($http) {
 
 // Service for Geolocation of the User.
 const geolocation = function () {
-  const getPosition = (cbSuccess, cbError, cbNoGeo) => {
+  const getPosition = function (cbSuccess, cbError, cbNoGeo) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(cbSuccess, cbError)
     } else {
@@ -78,7 +105,7 @@ const geolocation = function () {
     }
   };
   return {
-    getPosition: getPosition
+    getPosition : getPosition
   }
 };
 

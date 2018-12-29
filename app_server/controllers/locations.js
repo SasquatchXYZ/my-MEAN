@@ -10,29 +10,6 @@ if (process.env.NODE_ENV === 'production') {
 // Homepage
 module.exports.homelist = (req, res) => {
   renderHomepage(req, res)
-/*  const path = '/api/locations';
-  const requestOptions = {
-    url: apiOptions.server + path,
-    method: 'GET',
-    json: {},
-    qs: {
-      lng: -84.238690,
-      lat: 33.879700,
-      maxDistance: 20
-    }
-  };
-  request(
-    requestOptions, (err, response, body) => {
-      let data = body;
-      console.log(response.statusCode);
-      if (response.statusCode === 200 && data.length) {
-        for (let k = 0; k < data.length; k++) {
-          data[k].distance = _formatDistance(data[k].distance)
-        }
-      }
-      renderHomepage(req, res, data)
-    }
-  )*/
 };
 
 // Location Info Page
@@ -84,15 +61,6 @@ module.exports.doAddReview = (req, res) => {
 // Render Functions ----------------------------------------------------------------------------------------------------
 // Render Homepage
 const renderHomepage = (req, res, responseBody) => {
-  /*let message;
-  if (!(responseBody instanceof Array)) {
-    message = 'API Lookup Error';
-    responseBody = [];
-  } else {
-    if (!responseBody.length) {
-      message = 'No places found nearby';
-    }
-  }*/
   res.render("locations-list", {
     title: "Loc8r - find a place to work with wifi",
     pageHeader: {
@@ -129,19 +97,6 @@ const renderReviewForm = (req, res, locDetail) => {
   });
 };
 // Helper Functions ----------------------------------------------------------------------------------------------------
-// Function to Format Homepage Distance
-const _formatDistance = distance => {
-  let numDistance, unit;
-  if (distance > 1) {
-    numDistance = parseFloat(distance).toFixed(1);
-    unit = 'km'
-  } else {
-    numDistance = parseInt(distance * 1000, 10);
-    unit = 'm'
-  }
-  return numDistance + unit
-};
-
 // Error Handling Function for Details Page
 const _showError = (req, res, status) => {
   let title, content;

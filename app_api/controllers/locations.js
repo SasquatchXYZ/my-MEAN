@@ -79,13 +79,9 @@ module.exports.locationsListByDistance = (req, res) => {
       }
     }
   ]).then(results => {
-    // let locations;
-    // console.log('Geo Results', results);
-    // console.log('Geo Stats', stats);
     if (!results) {
       sendJsonResponse(res, 404, {'message': 'No Results Found.'});
     } else {
-      // locations = makeLocationsList(req, res, results, stats);
       sendJsonResponse(res, 200, results)
     }
   })
@@ -182,7 +178,7 @@ module.exports.locationsDeleteOne = (req, res) => {
   }
 };
 
-// Function for the Creationg of the Locations List --------------------------------------------------------------------
+// Function for the Creation of the Locations List --------------------------------------------------------------------
 const makeLocationsList = (req, res, results, stats) => {
   let locations = [];
   results.forEach(doc => {

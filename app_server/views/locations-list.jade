@@ -18,10 +18,10 @@ block content
           h4
             a(href='/location/{{ location._id }}') {{ location.name }}
             small.rating-stars(rating-stars, rating="location.rating")
-            span.badge.pull-right.badge-default {{ location.distance | formatDistance}}
-            p.address {{ location.address }}
-            p
-              span.label.label-warning.label-facility(ng-repeat="facility in location.facilities")
-                | {{ facility }}
+            span.badge.pull-right.badge-default {{ location.distance | formatDistance }}
+          p.address {{ location.address }}
+          p
+            span.label.label-warning.label-facility(ng-repeat="facility in location.facilities")
+              | {{ facility }}
     .col-xs-12.col-sm-4
       p.lead= sidebar

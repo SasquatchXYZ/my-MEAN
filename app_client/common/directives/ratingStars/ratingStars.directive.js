@@ -8,6 +8,6 @@ function ratingStars() {
     scope: {
       thisRating: '=rating'
     },
-    templateUrl: '/common/directives/ratingStars/ratingStars/template/html'
+    templateUrl: '/common/directives/ratingStars/ratingStars.template.html'
   }
 };

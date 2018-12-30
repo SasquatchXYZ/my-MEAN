@@ -4,7 +4,9 @@
     .module('loc8rApp')
     .filter('formatDistance', formatDistance);
 
-  const _isNumeric = n => !isNaN(parseFloat(n)) && isFinite(n);
+  const _isNumeric = function (n) {
+    return !isNaN(parseFloat(n)) && isFinite(n)
+  };
 
   function formatDistance() {
     return distance => {

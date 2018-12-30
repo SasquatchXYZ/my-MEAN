@@ -17,29 +17,29 @@
     };
     vm.message = 'Checking your location...';
 
-    vm.getData = position => {
+    vm.getData = function (position) {
       const lat = position.coords.latitude,
         lng = position.coords.longitude;
       vm.message = 'Searching For Nearby Places...';
       loc8rData.locationByCoords(lat, lng)
-        .then(results => {
+        .then(function(results) {
           // console.log(results);
           vm.message = results.data.length > 0 ? '' : 'No Locations Found.';
           vm.data = {locations: results.data}
-        }, e => {
+        }, function (e) {
           vm.message = 'Sorry, Something\'s Gone Wrong...';
           console.log(e)
         })
     };
 
-    vm.showError = error => {
-      $scope.$apply(() => {
+    vm.showError = function (error) {
+      $scope.$apply(function () {
         vm.message = error.message
       })
     };
 
-    vm.noGeo = () => {
-      $scope.$apply(() => {
+    vm.noGeo = function () {
+      $scope.$apply(function () {
         vm.message = 'Geolocation not supported by this browser.'
       })
     };
